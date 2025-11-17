@@ -61,7 +61,7 @@ struct ChatView: View {
                         proxy.scrollTo(last.id, anchor: .bottom)
                     }
                 }
-                .onChange(of: viewModel.languageModelSession?.transcript) { _ in
+                .onChange(of: viewModel.languageModelSession?.transcript) {
                     // Ensure we always scroll to the latest message, even when content exceeds the device height
                     if let last = viewModel.languageModelSession?.transcript.last {
                         withAnimation(.easeOut) {
@@ -69,8 +69,8 @@ struct ChatView: View {
                         }
                     }
                 }
-                .onChange(of: viewModel.isLoading) { isLoading in
-                    if isLoading {
+                .onChange(of: viewModel.isLoading) {
+                    if viewModel.isLoading {
                         withAnimation(.easeOut) {
                             proxy.scrollTo("loading", anchor: .bottom)
                         }
@@ -92,7 +92,7 @@ struct ChatView: View {
         .safeAreaInset(edge: .top) {
             header
                 .padding(.horizontal, 20)
-                .padding(.top, 12)
+                .padding(.vertical, 12)
                 .background(Color(.systemBackground))
         }
         .safeAreaInset(edge: .bottom) { composer }
