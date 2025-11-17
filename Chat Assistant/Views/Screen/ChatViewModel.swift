@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Foundation
+import FoundationModels
 import Combine
 
 // MARK: - Chat ViewModel
@@ -18,10 +18,19 @@ final class ChatViewModel: ObservableObject {
     @Published var isInputFocused: Bool = false
     @Published var isLoading: Bool = false
     
+    @Published var languageModelSession: LanguageModelSession?
+    
     // MARK: - Initialization
     init() {
         loadInitialMessages()
+        setupLanguageModel()
     }
+    
+    private func setupLanguageModel(){
+        guard SystemLanguageModel.default.availability == .available else { return }
+        languageModelSession = LanguageModelSession(instructions: "You're a helpful assistant")
+    }
+    
     
     // MARK: - Private Methods
     private func loadInitialMessages() {
@@ -43,7 +52,11 @@ final class ChatViewModel: ObservableObject {
         message = ""
         isInputFocused = false
         
-        simulateAIResponse(for: trimmed)
+        Task {
+            await generateAnswer(for: trimmed)
+        }
+//        simulateAIResponse(for: trimmed)
+        
     }
     
     func clearChat() {
@@ -88,6 +101,31 @@ final class ChatViewModel: ObservableObject {
                 isLoading = false
             }
         }
+    }
+    
+    
+    func generateAnswer(for question: String) async {
+        guard let session = languageModelSession, !question.isEmpty else { return }
+        
+        isLoading = true
+        
+        let prompt = question
+        
+        do {
+            let responseStream = session.streamResponse(to: Prompt(prompt))
+            for try await _ in responseStream {
+                // Foundation models handles automatically
+            }
+            
+            let completed = try await responseStream.collect()
+            await MainActor.run {
+                isLoading = false
+            }
+            
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+        
     }
 }
 

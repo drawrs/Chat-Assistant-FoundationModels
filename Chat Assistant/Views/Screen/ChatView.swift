@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Foundation
+import FoundationModels
 import Combine
 
 struct ChatView: View {
@@ -20,11 +20,14 @@ struct ChatView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         // Sample chat bubbles
                         VStack(spacing: 12) {
-                            ForEach(viewModel.messages) { msg in
-                                ChatBubble(message: msg)
-                                    .id(msg.id)
+//                            ForEach(viewModel.messages) { msg in
+//                                ChatBubble(message: msg)
+//                                    .id(msg.id)
+//                            }
+                            ForEach(viewModel.languageModelSession?.transcript ?? .init()) { entry in
+                                TranscriptEntryView(entry: entry)
+                                    .id(entry.id)
                             }
-                            
                             // Loading indicator
                             if viewModel.isLoading {
                                 HStack {
