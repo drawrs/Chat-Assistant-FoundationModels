@@ -6,14 +6,11 @@
 //
 
 import SwiftUI
+import Foundation
+import Combine
 
 struct ChatView: View {
-    @State private var message: String = ""
-    @State private var messages: [ChatMessage] = [
-        ChatMessage(text: "Hi there! How can I help you today?", isUser: false),
-        ChatMessage(text: "Add sample bubble chat message", isUser: true),
-        ChatMessage(text: "Here's a sample bubble layout using SwiftUI.", isUser: false)
-    ]
+    @StateObject private var viewModel = ChatViewModel()
     @FocusState private var isInputFocused: Bool
 
     var body: some View {
@@ -24,9 +21,31 @@ struct ChatView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         // Sample chat bubbles
                         VStack(spacing: 12) {
-                            ForEach(messages) { msg in
+                            ForEach(viewModel.messages) { msg in
                                 ChatBubble(message: msg)
                                     .id(msg.id)
+                            }
+                            
+                            // Loading indicator
+                            if viewModel.isLoading {
+                                HStack {
+                                    HStack(spacing: 8) {
+                                        ProgressView()
+                                            .scaleEffect(0.8)
+                                        Text("Thinking...")
+                                            .font(.system(size: 14))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .fill(Color(.systemGray6))
+                                    )
+                                    
+                                    Spacer()
+                                }
+                                .id("loading")
                             }
                         }
                         .padding(.top, 16)
@@ -40,21 +59,28 @@ struct ChatView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
                 .onAppear {
-                    if let last = messages.last {
+                    if let last = viewModel.messages.last {
                         proxy.scrollTo(last.id, anchor: .bottom)
                     }
                 }
-                .onChange(of: messages) { _ in
+                .onChange(of: viewModel.messages) { _ in
                     // Ensure we always scroll to the latest message, even when content exceeds the device height
-                    if let last = messages.last {
+                    if let last = viewModel.messages.last {
                         withAnimation(.easeOut) {
                             proxy.scrollTo(last.id, anchor: .bottom)
                         }
                     }
                 }
+                .onChange(of: viewModel.isLoading) { isLoading in
+                    if isLoading {
+                        withAnimation(.easeOut) {
+                            proxy.scrollTo("loading", anchor: .bottom)
+                        }
+                    }
+                }
             }
 
-            if messages.isEmpty {
+            if viewModel.messages.isEmpty {
                 VStack(spacing: 12) {
                     Spacer()
                     suggestionRow
@@ -88,9 +114,7 @@ struct ChatView: View {
             Spacer()
 
             Button(action: {
-                withAnimation(.easeInOut) {
-                    messages.removeAll()
-                }
+                viewModel.clearChat()
             }) {
                 Image(systemName: "trash")
                     .font(.system(size: 14, weight: .semibold))
@@ -110,8 +134,19 @@ struct ChatView: View {
     private var suggestionRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
-                SuggestionCard(title: "Creative ways", subtitle: "to teach coding to kids")
-                SuggestionCard(title: "Generate UI", subtitle: "for a finance tracking app")
+                SuggestionCard(
+                    title: "Creative ways", 
+                    subtitle: "to teach coding to kids"
+                ) {
+                    viewModel.handleSuggestion("Creative ways", subtitle: "to teach coding to kids")
+                }
+                
+                SuggestionCard(
+                    title: "Generate UI", 
+                    subtitle: "for a finance tracking app"
+                ) {
+                    viewModel.handleSuggestion("Generate UI", subtitle: "for a finance tracking app")
+                }
             }
             .padding(.horizontal, 2)
         }
@@ -124,11 +159,17 @@ struct ChatView: View {
 
                 // Input field with mic icon
                 HStack(spacing: 10) {
-                    TextField("Ask anything", text: $message, axis: .vertical)
+                    TextField("Ask anything", text: $viewModel.message, axis: .vertical)
                         .focused($isInputFocused)
                         .textFieldStyle(.plain)
                         .font(.system(size: 18))
                         .padding(.vertical, 12)
+                        .onChange(of: isInputFocused) { focused in
+                            viewModel.isInputFocused = focused
+                        }
+                        .onChange(of: viewModel.isInputFocused) { focused in
+                            isInputFocused = focused
+                        }
 
                     Button(action: {}) {
                         Image(systemName: "mic")
@@ -145,22 +186,18 @@ struct ChatView: View {
 
                 // Send button
                 Button(action: {
-                    let trimmed = message.trimmingCharacters(in: .whitespacesAndNewlines)
-                    guard !trimmed.isEmpty else { return }
-                    messages.append(ChatMessage(text: trimmed, isUser: true))
-                    message = ""
-                    isInputFocused = false
+                    viewModel.sendMessage()
                 }) {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 18, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 44, height: 44)
                         .background(
-                            Circle().fill(!message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? Color.black : Color(.systemGray4))
+                            Circle().fill(viewModel.canSendMessage ? Color.black : Color(.systemGray4))
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(!viewModel.canSendMessage)
                 .accessibilityLabel("Send message")
             }
         }
