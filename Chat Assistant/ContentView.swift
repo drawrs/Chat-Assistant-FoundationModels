@@ -14,6 +14,7 @@ struct ContentView: View {
         ChatMessage(text: "Add sample bubble chat message", isUser: true),
         ChatMessage(text: "Here's a sample bubble layout using SwiftUI.", isUser: false)
     ]
+    @FocusState private var isInputFocused: Bool
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -32,7 +33,12 @@ struct ContentView: View {
                         .padding(.horizontal, 20)
                         .padding(.bottom, 16)
                     }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        isInputFocused = false
+                    }
                 }
+                .scrollDismissesKeyboard(.interactively)
                 .onAppear {
                     if let last = messages.last {
                         proxy.scrollTo(last.id, anchor: .bottom)
@@ -120,6 +126,7 @@ struct ContentView: View {
                 // Input field with mic icon
                 HStack(spacing: 10) {
                     TextField("Ask anything", text: $message, axis: .vertical)
+                        .focused($isInputFocused)
                         .textFieldStyle(.plain)
                         .font(.system(size: 18))
                         .padding(.vertical, 12)
@@ -143,6 +150,7 @@ struct ContentView: View {
                     guard !trimmed.isEmpty else { return }
                     messages.append(ChatMessage(text: trimmed, isUser: true))
                     message = ""
+                    isInputFocused = false
                 }) {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 18, weight: .bold))
