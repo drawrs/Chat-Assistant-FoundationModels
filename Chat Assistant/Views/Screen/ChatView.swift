@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  ChatView.swift
 //  Chat Assistant
 //
 //  Created by Rizal Hilman on 17/11/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct ChatView: View {
     @State private var message: String = ""
     @State private var messages: [ChatMessage] = [
         ChatMessage(text: "Hi there! How can I help you today?", isUser: false),
@@ -55,7 +55,6 @@ struct ContentView: View {
             }
 
             if messages.isEmpty {
-                // Suggestion chips stacked just above the composer
                 VStack(spacing: 12) {
                     Spacer()
                     suggestionRow
@@ -167,68 +166,12 @@ struct ContentView: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 10)
-//        .background(.thinMaterial)
     }
 }
 
-// MARK: - Chat Message Model
-struct ChatMessage: Identifiable, Equatable {
-    let id = UUID()
-    let text: String
-    let isUser: Bool
-}
-
-// MARK: - Suggestion Card
-struct SuggestionCard: View {
-    let title: String
-    let subtitle: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(title)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundStyle(.primary)
-            Text(subtitle)
-                .font(.system(size: 16))
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 18)
-        .padding(.horizontal, 16)
-        .background(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .fill(Color(.systemGray6))
-        )
-    }
-}
-
-// MARK: - Chat Bubble
-struct ChatBubble: View {
-    let message: ChatMessage
-
-    var body: some View {
-        HStack {
-            if message.isUser { Spacer(minLength: 40) }
-
-            Text(message.text)
-                .font(.system(size: 16))
-                .foregroundStyle(message.isUser ? .white : .primary)
-                .padding(.vertical, 10)
-                .padding(.horizontal, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(message.isUser ? Color.black : Color(.systemGray6))
-                )
-                .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
-
-            if !message.isUser { Spacer(minLength: 40) }
-        }
-        .frame(maxWidth: .infinity, alignment: message.isUser ? .trailing : .leading)
-        .animation(.default, value: message.text)
-    }
-}
 
 #Preview {
     NavigationStack {
-        ContentView()
+        ChatView()
     }
 }
