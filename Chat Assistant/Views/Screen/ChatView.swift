@@ -155,33 +155,38 @@ struct ChatView: View {
     private var composer: some View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
-                HStack(spacing: 10) {
-                    TextField("Ask anything", text: $viewModel.message, axis: .vertical)
-                        .focused($isInputFocused)
-                        .textFieldStyle(.plain)
-                        .font(.system(size: 18))
-                        .padding(.vertical, 12)
-                        .onChange(of: isInputFocused) { focused in
-                            viewModel.isInputFocused = focused
-                        }
-                        .onChange(of: viewModel.isInputFocused) { focused in
-                            isInputFocused = focused
-                        }
-                }
-                .padding(.horizontal, 14)
-                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 28))
+                GlassEffectContainer {
+                    HStack(spacing: 10) {
+                        TextField("Ask anything", text: $viewModel.message, axis: .vertical)
+                            .focused($isInputFocused)
+                            .textFieldStyle(.plain)
+                            .font(.system(size: 18))
+                            .padding(.vertical, 12)
+                            .onChange(of: isInputFocused) { focused in
+                                viewModel.isInputFocused = focused
+                            }
+                            .onChange(of: viewModel.isInputFocused) { focused in
+                                isInputFocused = focused
+                            }
+                    }
+                    .padding(.horizontal, 14)
+                    .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 28))
 
-                // Send button
-                Button(action: {
-                    viewModel.sendMessage()
-                }) {
-                    Image(systemName: "paperplane.fill")
-                        .font(.system(size: 18, weight: .bold))
-                        .frame(width: 40, height: 38)
+                    // Send button
+                    Button(action: {
+                        viewModel.sendMessage()
+                    }) {
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 18, weight: .bold))
+                            .frame(width: 44, height: 44)
+                    }
+                    .glassEffect(.regular.interactive(), in: .circle)
+                    .contentShape(Circle())
+                    .buttonStyle(.plain)
+                    .disabled(!viewModel.canSendMessage)
+                    .accessibilityLabel("Send message")
                 }
-                .buttonStyle(.glassProminent)
-                .disabled(!viewModel.canSendMessage)
-                .accessibilityLabel("Send message")
+                
             }
         }
         .padding(.horizontal, 20)
@@ -195,3 +200,4 @@ struct ChatView: View {
         ChatView()
     }
 }
+

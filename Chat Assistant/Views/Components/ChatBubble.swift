@@ -21,7 +21,7 @@ struct ChatBubble: View {
                 .padding(.horizontal, 14)
                 .background(
                     RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(message.isUser ? Color.black : Color(.systemGray6))
+                        .fill(message.isUser ? Color.accentColor : Color(.systemGray6))
                 )
                 .frame(maxWidth: 280, alignment: message.isUser ? .trailing : .leading)
 
