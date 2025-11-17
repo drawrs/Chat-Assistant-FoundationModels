@@ -20,10 +20,6 @@ struct ChatView: View {
                     VStack(alignment: .leading, spacing: 0) {
                         // Sample chat bubbles
                         VStack(spacing: 12) {
-//                            ForEach(viewModel.messages) { msg in
-//                                ChatBubble(message: msg)
-//                                    .id(msg.id)
-//                            }
                             ForEach(viewModel.languageModelSession?.transcript ?? .init()) { entry in
                                 TranscriptEntryView(entry: entry)
                                     .id(entry.id)
@@ -61,13 +57,13 @@ struct ChatView: View {
                 }
                 .scrollDismissesKeyboard(.interactively)
                 .onAppear {
-                    if let last = viewModel.messages.last {
+                    if let last = viewModel.languageModelSession?.transcript.last {
                         proxy.scrollTo(last.id, anchor: .bottom)
                     }
                 }
-                .onChange(of: viewModel.messages) { _ in
+                .onChange(of: viewModel.languageModelSession?.transcript) { _ in
                     // Ensure we always scroll to the latest message, even when content exceeds the device height
-                    if let last = viewModel.messages.last {
+                    if let last = viewModel.languageModelSession?.transcript.last {
                         withAnimation(.easeOut) {
                             proxy.scrollTo(last.id, anchor: .bottom)
                         }
@@ -82,15 +78,15 @@ struct ChatView: View {
                 }
             }
 
-            if viewModel.messages.isEmpty {
-                VStack(spacing: 12) {
-                    Spacer()
-                    suggestionRow
-                        .padding(.horizontal, 8)
-                }
-                .padding(.bottom, 6)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
+//            if ((viewModel.languageModelSession?.transcript.isEmpty) != nil) {
+//                VStack(spacing: 12) {
+//                    Spacer()
+//                    suggestionRow
+//                        .padding(.horizontal, 8)
+//                }
+//                .padding(.bottom, 6)
+//                .transition(.move(edge: .bottom).combined(with: .opacity))
+//            }
         }
         .background(Color(.systemBackground))
         .safeAreaInset(edge: .top) {

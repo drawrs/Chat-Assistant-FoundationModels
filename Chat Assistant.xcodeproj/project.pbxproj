@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3625B25F2ECB2C130025A442 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 3625B25E2ECB2C130025A442 /* MarkdownUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		36712B8E2ECAA5BE0097A195 /* Chat Assistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Chat Assistant.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3625B25F2ECB2C130025A442 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = "Chat Assistant";
 			packageProductDependencies = (
+				3625B25E2ECB2C130025A442 /* MarkdownUI */,
 			);
 			productName = "Chat Assistant";
 			productReference = 36712B8E2ECAA5BE0097A195 /* Chat Assistant.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 36712B852ECAA5BE0097A195;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3625B25D2ECB2C130025A442 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 36712B8F2ECAA5BE0097A195 /* Products */;
 			projectDirPath = "";
@@ -332,6 +341,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3625B25D2ECB2C130025A442 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3625B25E2ECB2C130025A442 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3625B25D2ECB2C130025A442 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 36712B862ECAA5BE0097A195 /* Project object */;
 }
