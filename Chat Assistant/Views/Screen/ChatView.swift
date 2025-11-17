@@ -15,7 +15,6 @@ struct ChatView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Main scrollable area with auto-scroll to bottom
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
@@ -156,8 +155,6 @@ struct ChatView: View {
     private var composer: some View {
         VStack(spacing: 12) {
             HStack(spacing: 12) {
-
-                // Input field with mic icon
                 HStack(spacing: 10) {
                     TextField("Ask anything", text: $viewModel.message, axis: .vertical)
                         .focused($isInputFocused)
@@ -170,19 +167,9 @@ struct ChatView: View {
                         .onChange(of: viewModel.isInputFocused) { focused in
                             isInputFocused = focused
                         }
-
-                    Button(action: {}) {
-                        Image(systemName: "mic")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.plain)
                 }
                 .padding(.horizontal, 14)
-                .background(
-                    RoundedRectangle(cornerRadius: 28, style: .continuous)
-                        .fill(Color(.systemGray6))
-                )
+                .glassEffect(.regular.interactive(), in: .rect(cornerRadius: 28))
 
                 // Send button
                 Button(action: {
@@ -190,13 +177,9 @@ struct ChatView: View {
                 }) {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 44, height: 44)
-                        .background(
-                            Circle().fill(viewModel.canSendMessage ? Color.black : Color(.systemGray4))
-                        )
+                        .frame(width: 40, height: 38)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glassProminent)
                 .disabled(!viewModel.canSendMessage)
                 .accessibilityLabel("Send message")
             }
