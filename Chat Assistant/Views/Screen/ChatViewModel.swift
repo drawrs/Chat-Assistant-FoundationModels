@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FoundationModels
+import FoundationModelsTools
 import Combine
 
 // MARK: - Chat ViewModel
@@ -27,7 +28,15 @@ final class ChatViewModel: ObservableObject {
     
     private func setupLanguageModel(){
         guard SystemLanguageModel.default.availability == .available else { return }
-        languageModelSession = LanguageModelSession(tools: [CurrentDateTimeTool()], instructions: "You're a helpful assistant")
+        languageModelSession = LanguageModelSession(tools:
+                                                        [
+                                                            CurrentDateTimeTool(),
+                                                            CalendarTool(),
+                                                            LocationTool(),
+                                                            WeatherTool(),
+                                                            HealthTool(),
+                                                        ],
+                                                    instructions: "You're a helpful assistant")
     }
     
     
