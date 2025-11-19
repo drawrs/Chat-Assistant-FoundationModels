@@ -27,7 +27,7 @@ final class ChatViewModel: ObservableObject {
     
     private func setupLanguageModel(){
         guard SystemLanguageModel.default.availability == .available else { return }
-        languageModelSession = LanguageModelSession(instructions: "You're a helpful assistant")
+        languageModelSession = LanguageModelSession(tools: [CurrentDateTimeTool()], instructions: "You're a helpful assistant")
     }
     
     
